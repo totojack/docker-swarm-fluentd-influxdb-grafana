@@ -1,0 +1,43 @@
+version: "3.2"
+services:
+    webserver:
+        image: nginx
+        ports:
+            - "8080:80"
+        logging:
+            driver: fluentd
+            options:
+                fluentd-address: 127.0.0.1:24224 # this is the port published by the fluentd service below
+                fluentd-async-connect: 1
+                tag: httpd.nginx
+
+    fluentd:
+        image: papirkurvendk/fluentd-influxdb
+        volumes:
+            - fluentd:/fluentd/log
+        ports: # needs to be exposed for the logging driver to have access
+            - "24224:24224"
+            - "24224:24224/udp"
+
+    influxdb:
+        image: influxdb
+        volumes:
+            - influx:/var/lib/influxdb
+
+    grafana:
+        environment:
+          GF_INSTALL_PLUGINS: grafana-piechart-panel,grafana-clock-panel,grafana-simple-json-datasource
+        image: grafana/grafana:5.3.4
+        ports:
+            - 0.0.0.0:3000:3000
+        volumes:
+            - grafana:/var/lib/grafana
+
+############## Data persisted on host #######
+volumes:
+    influx:
+        driver: local
+    fluentd:
+        driver: local
+    grafana:
+        driver: local
