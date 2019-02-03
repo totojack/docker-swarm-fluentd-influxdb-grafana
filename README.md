@@ -7,5 +7,5 @@ Inspired by:
 
 ## Steps
 
-1 - setup Docker Swarm with CoreOS
-2 - activate the services stack described in the docker-compose.yml file
+1. setup Docker Swarm with CoreOS
+2. activate the services stack described in the docker-compose.yml file
